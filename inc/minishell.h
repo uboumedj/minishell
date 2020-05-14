@@ -35,8 +35,10 @@ void					read_command(t_shell *sh);
 void					print_prompt(void);
 void					trim_command(t_shell *sh);
 void					remove_tabs(char *str);
-char					**save_arguments(char **tab);
 int						try_builtin_command(t_shell *sh);
+int						search_env(char **env, char *key);
+void					replace_env_vars_and_tilde(t_shell *sh);
+char					*env_key_value(char **env, char *key);
 
 /*
 ** Builtin commands
@@ -44,11 +46,25 @@ int						try_builtin_command(t_shell *sh);
 
 void					builtin_echo(t_shell *sh);
 void					builtin_env(t_shell *sh);
+void					builtin_cd(t_shell *sh);
+void					update_pwd(t_shell *sh, char *path);
+
+/*
+** Path commands
+*/
+
+int						try_path_command(t_shell *sh);
+char					**get_path_list(char **env);
+int						execute_command(t_shell *sh, char *cmd);
 
 /*
 ** Errors
 */
 
 void					error_unknown(char *cmd);
+void					error_path(char *path);
+void					error_file(char *path);
+void					error_permissions(char *path);
+void					error_fork(int pid);
 
 #endif

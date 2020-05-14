@@ -12,11 +12,26 @@
 
 #include "../inc/minishell.h"
 
+int		try_builtin_command(t_shell *sh)
+{
+	if (ft_strcmp("echo", sh->command) == 0)
+		builtin_echo(sh);
+	else if (ft_strcmp("env", sh->command) == 0)
+		builtin_env(sh);
+	else if (ft_strcmp("cd", sh->command) == 0)
+		builtin_cd(sh);
+	else if (ft_strcmp("exit", sh->command) == 0)
+		return (-1);
+	else
+		return (0);
+	return (1);
+}
+
 void	builtin_echo(t_shell *sh)
 {
 	int		i;
 
-	i = 0;
+	i = 1;
 	if (sh->arguments)
 	{
 		while (sh->arguments[i])
@@ -42,5 +57,30 @@ void	builtin_env(t_shell *sh)
 			ft_printf("%s\n", sh->env[i]);
 			i++;
 		}
+	}
+}
+
+void	builtin_cd(t_shell *sh)
+{
+	char	*path;
+	char	*cwd;
+	char	buffer[2048 + 1];
+
+	if (sh->arguments && sh->arguments[0])
+	{
+		path = sh->arguments[1];
+		if (!access(path, F_OK))
+		{
+			if (chdir(path) == -1)
+				error_file(path);
+			else
+			{
+				if (!(cwd = getcwd(buffer, 2048)))
+					error_permissions(path);
+				update_pwd(sh, cwd);
+			}
+		}
+		else
+			error_path(path);
 	}
 }

@@ -24,20 +24,20 @@ void	read_command(t_shell *sh)
 		if (ft_strcmp(sh->command, "") != 0)
 		{
 			trim_command(sh);
+			if (sh->arguments)
+				replace_env_vars_and_tilde(sh);
 			signal = try_builtin_command(sh);
 			if (signal == 0)
-				error_unknown(sh->command);
+			{
+				if (try_path_command(sh) == 0)
+					error_unknown(sh->command);
+			}
 			if (sh->arguments)
 				ft_strarrayfree(sh->arguments);
 			sh->arguments = NULL;
 		}
 		ft_strdel(&(sh->command));
 	}
-}
-
-void	print_prompt(void)
-{
-	ft_putstr("\033[1;34m&> \033[0m");
 }
 
 void	trim_command(t_shell *sh)
@@ -52,42 +52,33 @@ void	trim_command(t_shell *sh)
 		tmp_cmd = ft_strdup(tab[0]);
 		ft_strdel(&(sh->command));
 		sh->command = tmp_cmd;
-		if (tab[1])
-			sh->arguments = save_arguments(tab);
+		sh->arguments = tab;
 	}
-	ft_strarrayfree(tab);
 }
 
-char	**save_arguments(char **tab)
+void	replace_env_vars_and_tilde(t_shell *sh)
 {
-	char	**res;
 	int		i;
-	size_t	len;
+	char	*tmp;
 
-	len = 1;
-	while (tab[len])
-		len++;
-	if (!(res = malloc(sizeof(char *) * len)))
-		return (NULL);
 	i = 1;
-	while (tab && tab[i])
+	while (sh->arguments[i])
 	{
-		res[i - 1] = ft_strdup(tab[i]);
+		tmp = NULL;
+		if (sh->arguments[i][0] == '$' && sh->arguments[i][1])
+		{
+			tmp = env_key_value(sh->env, sh->arguments[i]);
+			ft_strdel(&(sh->arguments[i]));
+			sh->arguments[i] = ft_strdup(tmp);
+			ft_strdel(&tmp);
+		}
+		else if (ft_strcmp("~", sh->arguments[i]) == 0)
+		{
+			tmp = env_key_value(sh->env, "$HOME");
+			ft_strdel(&(sh->arguments[i]));
+			sh->arguments[i] = ft_strdup(tmp);
+			ft_strdel(&tmp);
+		}
 		i++;
 	}
-	res[i - 1] = NULL;
-	return (res);
-}
-
-int		try_builtin_command(t_shell *sh)
-{
-	if (ft_strcmp("echo", sh->command) == 0)
-		builtin_echo(sh);
-	else if (ft_strcmp("env", sh->command) == 0)
-		builtin_env(sh);
-	else if (ft_strcmp("exit", sh->command) == 0)
-		return (-1);
-	else
-		return (0);
-	return (1);
 }
