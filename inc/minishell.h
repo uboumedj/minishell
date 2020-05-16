@@ -39,6 +39,8 @@ int						try_builtin_command(t_shell *sh);
 int						search_env(char **env, char *key);
 void					replace_env_vars_and_tilde(t_shell *sh);
 char					*env_key_value(char **env, char *key);
+char					**delete_from_env(char **env, char *key);
+char					**add_to_env(char **env, char *key, char *value);
 
 /*
 ** Builtin commands
@@ -48,6 +50,8 @@ void					builtin_echo(t_shell *sh);
 void					builtin_env(t_shell *sh);
 void					builtin_cd(t_shell *sh);
 void					update_pwd(t_shell *sh, char *path);
+void					builtin_setenv(t_shell *sh);
+void					builtin_unsetenv(t_shell *sh);
 
 /*
 ** Path commands

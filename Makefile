@@ -19,7 +19,8 @@ FLAGS = -Wall -Wextra -Werror
 LIBFT = libft
 
 SRCS = srcs/main.c srcs/initialise_shell.c srcs/read_command.c srcs/utils.c \
-		srcs/builtin_commands.c srcs/error.c srcs/path_commands.c
+		srcs/builtin_commands.c srcs/error.c srcs/path_commands.c \
+		srcs/builtin_commands2.c srcs/utils2.c
 
 INC = minishell.h
 

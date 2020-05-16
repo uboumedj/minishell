@@ -20,6 +20,10 @@ int		try_builtin_command(t_shell *sh)
 		builtin_env(sh);
 	else if (ft_strcmp("cd", sh->command) == 0)
 		builtin_cd(sh);
+	else if (ft_strcmp("unsetenv", sh->command) == 0)
+		builtin_unsetenv(sh);
+	else if (ft_strcmp("setenv", sh->command) == 0)
+		builtin_setenv(sh);
 	else if (ft_strcmp("exit", sh->command) == 0)
 		return (-1);
 	else
@@ -66,7 +70,7 @@ void	builtin_cd(t_shell *sh)
 	char	*cwd;
 	char	buffer[2048 + 1];
 
-	if (sh->arguments && sh->arguments[0])
+	if (sh->arguments && sh->arguments[1])
 	{
 		path = sh->arguments[1];
 		if (!access(path, F_OK))
@@ -82,5 +86,20 @@ void	builtin_cd(t_shell *sh)
 		}
 		else
 			error_path(path);
+	}
+}
+
+void	builtin_unsetenv(t_shell *sh)
+{
+	char	**new_env;
+
+	if (sh->arguments[1])
+	{
+		new_env = delete_from_env(sh->env, sh->arguments[1]);
+		if (new_env)
+		{
+			ft_strarrayfree(sh->env);
+			sh->env = new_env;
+		}
 	}
 }
