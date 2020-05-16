@@ -21,15 +21,15 @@ void	read_command(t_shell *sh)
 	{
 		print_prompt();
 		get_next_line(0, &(sh->command));
+		trim_command(sh);
 		if (ft_strcmp(sh->command, "") != 0)
 		{
-			trim_command(sh);
 			if (sh->arguments)
 				replace_env_vars_and_tilde(sh);
 			signal = try_builtin_command(sh);
 			if (signal == 0)
 			{
-				if (try_path_command(sh) == 0)
+				if (search_command(sh) == 0)
 					error_unknown(sh->command);
 			}
 			if (sh->arguments)
@@ -47,19 +47,26 @@ void	trim_command(t_shell *sh)
 
 	remove_tabs(sh->command);
 	tab = ft_strsplit(sh->command, ' ');
-	if (tab && tab[0])
+	if (tab)
 	{
-		tmp_cmd = ft_strdup(tab[0]);
+		if (tab[0])
+		{
+			tmp_cmd = ft_strdup(tab[0]);
+			sh->arguments = ft_strarrdup(tab);
+		}
+		else
+			tmp_cmd = ft_strdup("");
 		ft_strdel(&(sh->command));
 		sh->command = tmp_cmd;
-		sh->arguments = tab;
 	}
+	ft_strarrayfree(tab);
 }
 
 void	replace_env_vars_and_tilde(t_shell *sh)
 {
 	int		i;
 	char	*tmp;
+	char	*replaced_line;
 
 	i = 1;
 	while (sh->arguments[i])
@@ -72,13 +79,39 @@ void	replace_env_vars_and_tilde(t_shell *sh)
 			sh->arguments[i] = ft_strdup(tmp);
 			ft_strdel(&tmp);
 		}
-		else if (ft_strcmp("~", sh->arguments[i]) == 0)
+		else if (needs_tilde_replacing(sh->arguments[i]))
 		{
-			tmp = env_key_value(sh->env, "$HOME");
+			replaced_line = replace_tilde(sh->env, sh->arguments[1]);
 			ft_strdel(&(sh->arguments[i]));
-			sh->arguments[i] = ft_strdup(tmp);
-			ft_strdel(&tmp);
+			sh->arguments[i] = replaced_line;
 		}
 		i++;
 	}
+}
+
+int		needs_tilde_replacing(char *argument)
+{
+	int		result;
+
+	if (argument[0] == '~' && (!argument[1] || argument[1] == '/'))
+		result = 1;
+	else
+		result = 0;
+	return (result);
+}
+
+char	*replace_tilde(char **env, char *argument)
+{
+	char	*home;
+	char	*result;
+
+	home = env_key_value(env, "$HOME");
+	if (!argument[1])
+		result = home;
+	else
+	{
+		result = ft_strjoin(home, &argument[1]);
+		ft_strdel(&home);
+	}
+	return (result);
 }

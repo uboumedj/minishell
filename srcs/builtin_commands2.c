@@ -35,9 +35,40 @@ void	builtin_setenv(t_shell *sh)
 			}
 		}
 		else
-		{
-			return ;
-		}
+			setenv_one_parameter(sh, sh->arguments[i]);
 		i++;
+	}
+}
+
+void	setenv_one_parameter(t_shell *sh, char *param)
+{
+	char	**splitted_param;
+	char	**new_env;
+
+	splitted_param = ft_strsplit(param, '=');
+	if (splitted_param[0] && splitted_param[1])
+		new_env = add_to_env(sh->env, splitted_param[0], splitted_param[1]);
+	else if (splitted_param[0])
+		new_env = add_to_env(sh->env, splitted_param[0], "");
+	if (new_env)
+	{
+		ft_strarrayfree(sh->env);
+		sh->env = new_env;
+	}
+	ft_strarrayfree(splitted_param);
+}
+
+void	builtin_unsetenv(t_shell *sh)
+{
+	char	**new_env;
+
+	if (sh->arguments[1])
+	{
+		new_env = delete_from_env(sh->env, sh->arguments[1]);
+		if (new_env)
+		{
+			ft_strarrayfree(sh->env);
+			sh->env = new_env;
+		}
 	}
 }

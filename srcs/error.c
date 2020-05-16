@@ -43,7 +43,7 @@ void	error_file(char *path)
 
 void	error_permissions(char *path)
 {
-	ft_putstr_fd("\033[1;31mcd: permission denied: \033[0m", 2);
+	ft_putstr_fd("\033[1;31mpermission denied: \033[0m", 2);
 	ft_putstr_fd(path, 2);
 	ft_putstr_fd("\n", 2);
 }

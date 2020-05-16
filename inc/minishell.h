@@ -38,6 +38,8 @@ void					remove_tabs(char *str);
 int						try_builtin_command(t_shell *sh);
 int						search_env(char **env, char *key);
 void					replace_env_vars_and_tilde(t_shell *sh);
+int						needs_tilde_replacing(char *argument);
+char					*replace_tilde(char **env, char *argument);
 char					*env_key_value(char **env, char *key);
 char					**delete_from_env(char **env, char *key);
 char					**add_to_env(char **env, char *key, char *value);
@@ -49,14 +51,18 @@ char					**add_to_env(char **env, char *key, char *value);
 void					builtin_echo(t_shell *sh);
 void					builtin_env(t_shell *sh);
 void					builtin_cd(t_shell *sh);
+char					*determine_cd_path(char **env, char *arg);
 void					update_pwd(t_shell *sh, char *path);
 void					builtin_setenv(t_shell *sh);
 void					builtin_unsetenv(t_shell *sh);
+void					setenv_one_parameter(t_shell *sh, char *param);
 
 /*
 ** Path commands
 */
 
+int						search_command(t_shell *sh);
+int						test_file_executable(char *path);
 int						try_path_command(t_shell *sh);
 char					**get_path_list(char **env);
 int						execute_command(t_shell *sh, char *cmd);

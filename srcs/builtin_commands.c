@@ -70,36 +70,32 @@ void	builtin_cd(t_shell *sh)
 	char	*cwd;
 	char	buffer[2048 + 1];
 
-	if (sh->arguments && sh->arguments[1])
+	path = determine_cd_path(sh->env, sh->arguments[1]);
+	if (!access(path, F_OK))
 	{
-		path = sh->arguments[1];
-		if (!access(path, F_OK))
-		{
-			if (chdir(path) == -1)
-				error_file(path);
-			else
-			{
-				if (!(cwd = getcwd(buffer, 2048)))
-					error_permissions(path);
-				update_pwd(sh, cwd);
-			}
-		}
+		if (chdir(path) == -1)
+			error_file(path);
 		else
-			error_path(path);
+		{
+			if (!(cwd = getcwd(buffer, 2048)))
+				error_permissions(path);
+			update_pwd(sh, cwd);
+		}
 	}
+	else
+		error_path(path);
+	ft_strdel(&path);
 }
 
-void	builtin_unsetenv(t_shell *sh)
+char	*determine_cd_path(char **env, char *arg)
 {
-	char	**new_env;
+	char	*path;
 
-	if (sh->arguments[1])
-	{
-		new_env = delete_from_env(sh->env, sh->arguments[1]);
-		if (new_env)
-		{
-			ft_strarrayfree(sh->env);
-			sh->env = new_env;
-		}
-	}
+	if (!arg)
+		path = env_key_value(env, "$HOME");
+	else if (ft_strcmp("-", arg) == 0)
+		path = env_key_value(env, "$OLDPWD");
+	else
+		path = ft_strdup(arg);
+	return (path);
 }

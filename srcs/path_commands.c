@@ -12,6 +12,17 @@
 
 #include "../inc/minishell.h"
 
+int		search_command(t_shell *sh)
+{
+	if (access(sh->command, F_OK) == 0)
+	{
+		execute_command(sh, sh->command);
+		return (1);
+	}
+	else
+		return (try_path_command(sh));
+}
+
 int		try_path_command(t_shell *sh)
 {
 	char	**paths;
@@ -56,19 +67,40 @@ int		execute_command(t_shell *sh, char *cmd)
 	pid_t	child_pid;
 	int		child_status;
 
-	child_pid = fork();
-	if (child_pid < 0)
+	if (test_file_executable(cmd))
 	{
-		error_fork(child_pid);
-		exit(-1);
-	}
-	else if (child_pid == 0)
-	{
-		if (execve(cmd, sh->arguments, sh->env) < 0)
+		child_pid = fork();
+		if (child_pid < 0)
+		{
+			error_fork(child_pid);
 			return (-1);
-		else
-			exit(0);
+		}
+		else if (child_pid == 0)
+		{
+			execve(cmd, sh->arguments, sh->env);
+		}
+		wait(&child_status);
+		return (0);
 	}
-	wait(&child_status);
-	return ((child_status < 0) ? -1 : 0);
+	else
+		return (-1);
+}
+
+int		test_file_executable(char *path)
+{
+	struct stat		data;
+
+	if (lstat(path, &data) == -1)
+		return (0);
+	if (data.st_mode & S_IFREG)
+	{
+		if (data.st_mode & S_IXUSR)
+			return (1);
+		else
+		{
+			error_permissions(path);
+			return (0);
+		}
+	}
+	return (0);
 }
