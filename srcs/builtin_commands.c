@@ -79,7 +79,8 @@ void	builtin_cd(t_shell *sh)
 		{
 			if (!(cwd = getcwd(buffer, 2048)))
 				error_permissions(path);
-			update_pwd(sh, cwd);
+			else
+				update_pwd(sh, cwd);
 		}
 	}
 	else

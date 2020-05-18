@@ -12,9 +12,10 @@
 
 #include "../inc/minishell.h"
 
-void	read_command(t_shell *sh)
+int		read_command(t_shell *sh)
 {
 	int		signal;
+	int		return_value;
 
 	signal = 0;
 	while (signal != EXIT_SIGNAL)
@@ -32,12 +33,11 @@ void	read_command(t_shell *sh)
 				if (search_command(sh) == 0)
 					error_unknown(sh->command);
 			}
-			if (sh->arguments)
-				ft_strarrayfree(sh->arguments);
-			sh->arguments = NULL;
+			return_value = handle_exit(sh, signal);
 		}
 		ft_strdel(&(sh->command));
 	}
+	return (return_value);
 }
 
 void	trim_command(t_shell *sh)

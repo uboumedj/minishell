@@ -14,16 +14,18 @@
 
 int		main(int argc, char **argv, char **env)
 {
-	t_shell sh;
+	t_shell		sh;
+	char		exit_value;
 
 	(void)argc;
 	(void)argv;
+	exit_value = 0;
 	initialise_shell(&sh, env);
-	read_command(&sh);
+	exit_value = read_command(&sh);
 	if (sh.command)
 		free(sh.command);
 	if (sh.arguments)
 		ft_strarrayfree(sh.arguments);
 	ft_strarrayfree(sh.env);
-	return (0);
+	return (exit_value);
 }

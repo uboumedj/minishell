@@ -31,7 +31,7 @@ typedef struct			s_shell
 }						t_shell;
 
 void					initialise_shell(t_shell *sh, char **env);
-void					read_command(t_shell *sh);
+int						read_command(t_shell *sh);
 void					print_prompt(void);
 void					trim_command(t_shell *sh);
 void					remove_tabs(char *str);
@@ -56,6 +56,7 @@ void					update_pwd(t_shell *sh, char *path);
 void					builtin_setenv(t_shell *sh);
 void					builtin_unsetenv(t_shell *sh);
 void					setenv_one_parameter(t_shell *sh, char *param);
+int						handle_exit(t_shell *sh, int signal);
 
 /*
 ** Path commands

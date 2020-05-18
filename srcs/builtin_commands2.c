@@ -46,6 +46,7 @@ void	setenv_one_parameter(t_shell *sh, char *param)
 	char	**new_env;
 
 	splitted_param = ft_strsplit(param, '=');
+	new_env = NULL;
 	if (splitted_param[0] && splitted_param[1])
 		new_env = add_to_env(sh->env, splitted_param[0], splitted_param[1]);
 	else if (splitted_param[0])
@@ -71,4 +72,22 @@ void	builtin_unsetenv(t_shell *sh)
 			sh->env = new_env;
 		}
 	}
+}
+
+int		handle_exit(t_shell *sh, int signal)
+{
+	int		value;
+
+	value = 0;
+	if (signal == EXIT_SIGNAL)
+	{
+		if (sh->arguments && sh->arguments[1])
+			value = (unsigned char)ft_atoi(sh->arguments[1]);
+		if (value > 0)
+			ft_putstr("exit\n");
+	}
+	if (sh->arguments)
+		ft_strarrayfree(sh->arguments);
+	sh->arguments = NULL;
+	return (value);
 }
