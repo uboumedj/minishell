@@ -30,57 +30,51 @@ void	remove_tabs(char *str)
 	}
 }
 
-void	update_pwd(t_shell *sh, char *path)
+void	remove_quotations(t_shell *sh)
 {
-	int		pwd;
-	int		old_pwd;
+	char	*new_line;
+	int		i;
 
-	pwd = search_env(sh->env, "PWD=");
-	old_pwd = search_env(sh->env, "OLDPWD=");
-	free(sh->env[old_pwd]);
-	sh->env[old_pwd] = ft_strjoin("OLDPWD=", &(sh->env[pwd][4]));
-	free(sh->env[pwd]);
-	sh->env[pwd] = ft_strjoin("PWD=", path);
+	i = 0;
+	while (sh->command[i])
+	{
+		if (sh->command[i] == '"' || sh->command[i] == '\'')
+		{
+			if (i > 0 && sh->command[i - 1] == '\\')
+				new_line = str_with_index_removed(sh->command, i - 1);
+			else
+			{
+				new_line = str_with_index_removed(sh->command, i);
+				i = 0;
+			}
+			ft_strdel(&sh->command);
+			sh->command = new_line;
+			new_line = NULL;
+		}
+		else
+			i++;
+	}
 }
 
-int		search_env(char **env, char *key)
+char	*str_with_index_removed(char *str, int index)
 {
+	char	*result;
 	int		i;
 	int		j;
 
 	i = 0;
-	if (env)
+	j = 0;
+	if (!(result = malloc(sizeof(char) * ft_strlen(str))))
+		return (NULL);
+	while (str[j])
 	{
-		while (env[i])
+		if (j != index)
 		{
-			j = 0;
-			while (env[i][j] == key[j] && key[j] != 0)
-				j++;
-			if (key[j] == 0)
-				return (i);
+			result[i] = str[j];
 			i++;
 		}
+		j++;
 	}
-	return (-1);
-}
-
-char	*env_key_value(char **env, char *key)
-{
-	int		index;
-	char	*val;
-	int		success;
-
-	success = 0;
-	if (env && env[0] && key && key[0])
-	{
-		index = search_env(env, &key[1]);
-		if (index >= 0)
-		{
-			val = ft_strdup(&(env[index][ft_strlen(key)]));
-			success = 1;
-		}
-	}
-	if (success == 0)
-		val = ft_strdup("");
-	return (val);
+	result[i] = '\0';
+	return (result);
 }

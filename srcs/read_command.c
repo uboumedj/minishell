@@ -46,6 +46,7 @@ void	trim_command(t_shell *sh)
 	char	**tab;
 
 	remove_tabs(sh->command);
+	remove_quotations(sh);
 	tab = ft_strsplit(sh->command, ' ');
 	if (tab)
 	{

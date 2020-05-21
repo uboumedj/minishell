@@ -34,6 +34,8 @@ void					initialise_shell(t_shell *sh, char **env);
 int						read_command(t_shell *sh);
 void					print_prompt(void);
 void					trim_command(t_shell *sh);
+char					*str_with_index_removed(char *str, int index);
+void					remove_quotations(t_shell *sh);
 void					remove_tabs(char *str);
 int						try_builtin_command(t_shell *sh);
 int						search_env(char **env, char *key);
