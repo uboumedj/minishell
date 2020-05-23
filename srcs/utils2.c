@@ -12,19 +12,6 @@
 
 #include "../inc/minishell.h"
 
-void	update_pwd(t_shell *sh, char *path)
-{
-	int		pwd;
-	int		old_pwd;
-
-	pwd = search_env(sh->env, "PWD=");
-	old_pwd = search_env(sh->env, "OLDPWD=");
-	free(sh->env[old_pwd]);
-	sh->env[old_pwd] = ft_strjoin("OLDPWD=", &(sh->env[pwd][4]));
-	free(sh->env[pwd]);
-	sh->env[pwd] = ft_strjoin("PWD=", path);
-}
-
 int		search_env(char **env, char *key)
 {
 	int		i;
@@ -123,4 +110,16 @@ char	**add_to_env(char **env, char *key, char *value)
 	new_env[key_index] = ft_strdup(line);
 	ft_strdel(&line);
 	return (new_env);
+}
+
+void	missing_from_env(t_shell *sh, char *key, char *value)
+{
+	char	**new_env;
+
+	new_env = add_to_env(sh->env, key, value);
+	if (new_env)
+	{
+		ft_strarrayfree(sh->env);
+		sh->env = new_env;
+	}
 }

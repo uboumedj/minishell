@@ -14,7 +14,7 @@
 
 void	print_prompt(void)
 {
-	ft_putstr("\033[1;34m$> \033[0m");
+	ft_putstr_fd("\033[1;34m$> \033[0m", 2);
 }
 
 void	remove_tabs(char *str)

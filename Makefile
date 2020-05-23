@@ -14,7 +14,7 @@ NAME = minishell
 
 CC = gcc
 
-FLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 
 LIBFT = libft
 
@@ -32,7 +32,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@make -C $(LIBFT)
-	@ $(CC) $(FLAGS) -o $(NAME) $(SRCS) -Iinclude $(LIBFT)/libft.a
+	@ $(CC) $(CFLAGS) -o $(NAME) $(SRCS) -Iinclude $(LIBFT)/libft.a
 	@echo "\033[1;34mminishell\033[1;32m...compiled\t✓\033[0m"
 
 clean:

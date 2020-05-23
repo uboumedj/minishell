@@ -95,7 +95,10 @@ char	*determine_cd_path(char **env, char *arg)
 	if (!arg)
 		path = env_key_value(env, "$HOME");
 	else if (ft_strcmp("-", arg) == 0)
+	{
 		path = env_key_value(env, "$OLDPWD");
+		ft_printf("%s\n", path);
+	}
 	else
 		path = ft_strdup(arg);
 	return (path);

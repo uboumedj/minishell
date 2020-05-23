@@ -45,6 +45,7 @@ char					*replace_tilde(char **env, char *argument);
 char					*env_key_value(char **env, char *key);
 char					**delete_from_env(char **env, char *key);
 char					**add_to_env(char **env, char *key, char *value);
+void					missing_from_env(t_shell *sh, char *key, char *value);
 
 /*
 ** Builtin commands

@@ -91,3 +91,26 @@ int		handle_exit(t_shell *sh, int signal)
 	sh->arguments = NULL;
 	return (value);
 }
+
+void	update_pwd(t_shell *sh, char *path)
+{
+	int		pwd;
+	int		old_pwd;
+
+	pwd = search_env(sh->env, "PWD=");
+	old_pwd = search_env(sh->env, "OLDPWD=");
+	if (pwd == -1)
+		missing_from_env(sh, "PWD", path);
+	else
+	{
+		if (old_pwd == -1)
+			missing_from_env(sh, "OLDPWD", &(sh->env[pwd][4]));
+		else
+		{
+			free(sh->env[old_pwd]);
+			sh->env[old_pwd] = ft_strjoin("OLDPWD=", &(sh->env[pwd][4]));
+		}
+		free(sh->env[pwd]);
+		sh->env[pwd] = ft_strjoin("PWD=", path);
+	}
+}
