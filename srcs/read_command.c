@@ -21,7 +21,7 @@ int		read_command(t_shell *sh)
 	while (signal != EXIT_SIGNAL)
 	{
 		print_prompt();
-		if (get_next_line(0, &(sh->command)) == -1)
+		if (get_next_line(0, &(sh->command)) <= 0)
 			return (-1);
 		trim_command(sh);
 		if (ft_strcmp(sh->command, "") != 0)

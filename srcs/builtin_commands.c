@@ -40,7 +40,7 @@ void	builtin_echo(t_shell *sh)
 	{
 		while (sh->arguments[i])
 		{
-			ft_printf("%s", sh->arguments[i]);
+			ft_printf(sh->arguments[i]);
 			if (sh->arguments[i + 1])
 				ft_putchar(' ');
 			i++;
